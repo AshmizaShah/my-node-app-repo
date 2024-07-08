@@ -1,0 +1,97 @@
+image: atlassian/default-image:2
+
+pipelines:
+  branches:
+    develop:
+      - step:
+          name: Build for Development
+          script:
+            - cd app && zip -r ../myapp-dev.zip *
+          artifacts:
+            - myapp-dev.zip
+
+      - step:
+          name: Upload to S3 for Development
+          services:
+            - docker
+          script:
+            - pipe: atlassian/aws-code-deploy:0.2.10
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+                S3_BUCKET: ${S3_BUCKET}
+                APPLICATION_NAME: ${APPLICATION_NAME}
+                ZIP_FILE: 'myapp-dev.zip'
+                COMMAND: 'upload'
+                S3_KEY: 'development/myapp-dev.zip'
+
+      - step:
+          name: Deploy to Development
+          deployment: development
+          services:
+            - docker
+          script:
+            - pipe: atlassian/aws-code-deploy:0.2.10
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+                APPLICATION_NAME: ${APPLICATION_NAME}
+                DEPLOYMENT_GROUP: ${DEV_DEPLOYMENT_GROUP}
+                S3_BUCKET: ${S3_BUCKET}
+                ZIP_FILE: 'myapp-dev.zip'
+                COMMAND: 'deploy'
+                IGNORE_APPLICATION_STOP_FAILURES: 'true'
+                FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
+                WAIT: 'true'
+
+    main:
+      - step:
+          name: Build for Production
+          script:
+            - cd app && zip -r ../myapp-prod.zip *
+          artifacts:
+            - myapp-prod.zip
+
+      - step:
+          name: Upload to S3 for Production
+          services:
+            - docker
+          script:
+            - pipe: atlassian/aws-code-deploy:0.2.10
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+                S3_BUCKET: ${S3_BUCKET}
+                APPLICATION_NAME: ${APPLICATION_NAME}
+                ZIP_FILE: 'myapp-prod.zip'
+                COMMAND: 'upload'
+                S3_KEY: 'production/myapp-prod.zip'
+
+      - step:
+          name: Deploy to Production
+          deployment: production
+          trigger: automatic  # Automatic trigger for production deployment
+          services:
+            - docker
+          script:
+            - pipe: atlassian/aws-code-deploy:0.2.10
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+                APPLICATION_NAME: ${APPLICATION_NAME}
+                DEPLOYMENT_GROUP: ${PROD_DEPLOYMENT_GROUP}
+                S3_BUCKET: ${S3_BUCKET}
+                ZIP_FILE: 'myapp-prod.zip'
+                COMMAND: 'deploy'
+                IGNORE_APPLICATION_STOP_FAILURES: 'true'
+                FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
+                WAIT: 'true'
+
+definitions:
+  services:
+    docker:
+      memory: 2048
