@@ -3,7 +3,7 @@ name: Deploy to AWS (Development)
 on:
   push:
     branches:
-      - main  # Specify the branch you want to trigger deployments for
+      - main
 
 jobs:
   deploy:
@@ -12,8 +12,8 @@ jobs:
     env:
       AWS_DEFAULT_REGION: eu-north-1
       APPLICATION_NAME: CodeDeployApp
-      DEPLOYMENT_GROUP: develop
-      S3_BUCKET: my-node-app-artifacts-git
+      DEPLOYMENT_GROUP: development
+      S3_BUCKET: myawsbucketdemonst
 
     steps:
       - name: Checkout code
