@@ -1,0 +1,54 @@
+name: Deploy to Development
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_DEFAULT_REGION: eu-north-1
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      APPLICATION_NAME: CodeDeployApp
+      S3_BUCKET: my-node-app-artifacts-git
+      DEV_DEPLOYMENT_GROUP: develop
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Build for Development
+        run: |
+          cd app
+          zip -r ../myapp-dev.zip *
+        # Artifact path for later steps
+        working-directory: ${{ github.workspace }}
+
+      - name: Upload to S3 for Development
+        run: aws s3 cp myapp-dev.zip s3://${{ env.S3_BUCKET }}/development/myapp-dev.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Deploy to AWS CodeDeploy (Development)
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.APPLICATION_NAME }} \
+            --deployment-group-name ${{ env.DEV_DEPLOYMENT_GROUP }} \
+            --s3-location bucket=${{ env.S3_BUCKET }},bundleType=zip,key=development/myapp-dev.zip \
+            --file-exists-behavior OVERWRITE \
+            --region ${{ env.AWS_DEFAULT_REGION }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
