@@ -14,18 +14,12 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       APPLICATION_NAME: CodeDeployApp
-      S3_BUCKET: my-node-app-artifacts-git
+      S3_BUCKET: myawsbucketdemonst
       DEV_DEPLOYMENT_GROUP: develop
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Debug AWS Credentials
-        run: |
-          echo "AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
-          echo "AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          echo "AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}"
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
