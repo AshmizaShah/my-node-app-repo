@@ -1,9 +1,9 @@
-name: Deploy to Development
+name: Deploy to AWS (Development)
 
 on:
   push:
     branches:
-      - main
+      - main  # Specify the branch you want to trigger deployments for
 
 jobs:
   deploy:
@@ -11,44 +11,39 @@ jobs:
 
     env:
       AWS_DEFAULT_REGION: eu-north-1
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       APPLICATION_NAME: CodeDeployApp
-      S3_BUCKET: myawsbucketdemonst
-      DEV_DEPLOYMENT_GROUP: develop
+      DEPLOYMENT_GROUP: develop
+      S3_BUCKET: my-node-app-artifacts-git
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Build for Development
+      - name: Build project
         run: |
           cd app
           zip -r ../myapp-dev.zip *
-        # Artifact path for later steps
-        working-directory: ${{ github.workspace }}
 
-      - name: Upload to S3 for Development
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Upload to S3
         run: aws s3 cp myapp-dev.zip s3://${{ env.S3_BUCKET }}/development/myapp-dev.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
 
-      - name: Deploy to AWS CodeDeploy (Development)
+      - name: Deploy to AWS CodeDeploy
         run: |
           aws deploy create-deployment \
             --application-name ${{ env.APPLICATION_NAME }} \
-            --deployment-group-name ${{ env.DEV_DEPLOYMENT_GROUP }} \
+            --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} \
             --s3-location bucket=${{ env.S3_BUCKET }},bundleType=zip,key=development/myapp-dev.zip \
             --file-exists-behavior OVERWRITE \
             --region ${{ env.AWS_DEFAULT_REGION }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
