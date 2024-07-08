@@ -3,7 +3,7 @@ name: Deploy to AWS (Development)
 on:
   push:
     branches:
-      - main
+      - main  # Specify the branch you want to trigger deployments for
 
 jobs:
   deploy:
