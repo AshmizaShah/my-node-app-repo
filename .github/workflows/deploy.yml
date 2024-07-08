@@ -1,54 +1,43 @@
-name: Deploy to EC2 using AWS CodeDeploy
+name: Deploy to S3 and CodeDeploy
 
 on:
   push:
     branches:
-      - main  # Replace with your main branch name
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Use ubuntu-latest or another appropriate GitHub Actions runner
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Setup Node.js
+      
+      - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Replace with your Node.js version
+          node-version: '14'
 
-      - name: Install AWS CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
+      - name: Install dependencies
+        run: npm install
 
-      - name: Install dependencies and build
-        run: |
-          # If your project has dependencies, install them
-          # npm install
-
-          # If your project requires a build step (e.g., TypeScript, webpack), run it here
-          # npm run build
-
-          # Package your application for deployment (example assuming no dependencies or build step)
-          zip -r my-node-app.zip .
+      - name: Build
+        run: npm run build
 
       - name: Upload to S3
         run: |
-          aws s3 cp my-node-app.zip s3://myawsbucketdemonst/my-node-app.zip
+          aws s3 sync ./build s3://myawsbucketdemonst
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          AWS_DEFAULT_REGION: 'eu-north-1'
 
-      - name: Deploy to EC2 with AWS CodeDeploy
+      - name: Deploy to CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name ${{ secrets.AWS_CODEDEPLOY_APP_NAME }} \
-            --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_DEPLOYMENT_GROUP }} \
-            --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=my-node-app.zip
+            --application-name CodeDeployApp \
+            --deployment-group-name CodeDeployGroup \
+            --s3-location bucket=myawsbucketdemonst,key=my-node-app.zip,bundleType=zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          AWS_DEFAULT_REGION: 'eu-north-1'
