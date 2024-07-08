@@ -21,10 +21,10 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 sync ./path/to/your/application s3://myawsbucketdemonst
+          aws s3 sync ./app s3://myawsbucketdemonst/app --delete
 
       - name: Deploy to CodeDeploy
         run: |
-          aws deploy create-deployment --application-name YourApplicationName \
-                                        --deployment-group-name YourDeploymentGroupName \
-                                        --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=my-node-app.zip
+          aws deploy create-deployment --application-name CodeDeployApp \
+                                       --deployment-group-name CodeDeployGroup \
+                                       --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=app.zip
