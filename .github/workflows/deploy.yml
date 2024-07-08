@@ -1,4 +1,4 @@
-name: Node.js CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,42 +6,59 @@ on:
       - main
 
 jobs:
-  build_production:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+      - name: Build for Development
+        run: |
+          cd app
+          zip -r ../myapp-dev.zip *
+        working-directory: ${{ github.workspace }}
+        if: github.ref == 'refs/heads/main'
 
       - name: Build for Production
         run: |
           cd app
           zip -r ../myapp-prod.zip *
         working-directory: ${{ github.workspace }}
-        env:
-          NODE_ENV: production
+        if: github.ref == 'refs/heads/main'
+
+      - name: Upload to S3 for Development
+        uses: actions/aws/cli@v1
+        with:
+          args: s3 cp myapp-dev.zip s3://${{ secrets.S3_BUCKET }}/development/myapp-dev.zip
+        if: github.ref == 'refs/heads/main'
 
       - name: Upload to S3 for Production
-        run: aws s3 cp myapp-prod.zip s3://${{ secrets.S3_BUCKET }}/production/myapp-prod.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        uses: actions/aws/cli@v1
+        with:
+          args: s3 cp myapp-prod.zip s3://${{ secrets.S3_BUCKET }}/production/myapp-prod.zip
+        if: github.ref == 'refs/heads/main'
+
+      - name: Deploy to Development
+        uses: aws-actions/aws-codedeploy-github-actions@v1
+        with:
+          application-name: ${{ secrets.APPLICATION_NAME }}
+          deployment-group: ${{ secrets.DEV_DEPLOYMENT_GROUP }}
+          region: ${{ secrets.AWS_DEFAULT_REGION }}
+          wait-until-deployed: true
+          s3-bucket: ${{ secrets.S3_BUCKET }}
+          bundle-type: zip
+          key: development/myapp-dev.zip
+        if: github.ref == 'refs/heads/main'
 
       - name: Deploy to Production
-        run: |
-          aws deploy create-deployment \
-            --application-name ${{ secrets.APPLICATION_NAME }} \
-            --deployment-group-name ${{ secrets.PROD_DEPLOYMENT_GROUP }} \
-            --s3-location bucket=${{ secrets.S3_BUCKET }},key=production/myapp-prod.zip,bundleType=zip \
-            --region ${{ secrets.AWS_DEFAULT_REGION }} \
-            --ignore-application-stop-failures \
-            --file-exists-behavior OVERWRITE \
-            --wait
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        uses: aws-actions/aws-codedeploy-github-actions@v1
+        with:
+          application-name: ${{ secrets.APPLICATION_NAME }}
+          deployment-group: ${{ secrets.PROD_DEPLOYMENT_GROUP }}
+          region: ${{ secrets.AWS_DEFAULT_REGION }}
+          wait-until-deployed: true
+          s3-bucket: ${{ secrets.S3_BUCKET }}
+          bundle-type: zip
+          key: production/myapp-prod.zip
+        if: github.ref == 'refs/heads/main'
