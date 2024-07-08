@@ -13,9 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build and package application
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Replace with your Node.js version
+
+      - name: Install AWS CLI
         run: |
-          zip -r my-node-app.zip .  # Package your application for deployment
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      - name: Install dependencies and build
+        run: |
+          # If your project has dependencies, install them
+          # npm install
+
+          # If your project requires a build step (e.g., TypeScript, webpack), run it here
+          # npm run build
+
+          # Package your application for deployment (example assuming no dependencies or build step)
+          zip -r my-node-app.zip .
 
       - name: Upload to S3
         run: |
@@ -30,8 +47,4 @@ jobs:
           aws deploy create-deployment \
             --application-name ${{ secrets.AWS_CODEDEPLOY_APP_NAME }} \
             --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_DEPLOYMENT_GROUP }} \
-            --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},bundleType=zip,key=my-node-app.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+            --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},bundleType=

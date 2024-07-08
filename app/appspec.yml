@@ -1,15 +1,25 @@
- 
 version: 0.0
 os: linux
-
 files:
-  - source: ./
-    destination: /opt/apps
-
+  - source: /
+    destination: /srv/my-node-app  # Replace with your application's directory path
+permissions:
+  - object: /srv/my-node-app
+    pattern:
+      - "**/*"
+    owner: ec2-user  # Replace with the appropriate user for your OS
+    group: ec2-user  # Replace with the appropriate group for your OS
+    mode: 755  # Adjust file permissions as needed
 hooks:
+  BeforeInstall:
+    - location: scripts/stop.sh  # Path to your script to stop the application
+      timeout: 300
+      runas: ec2-user  # Replace with the appropriate user for your OS
+  AfterInstall:
+    - location: scripts/start.sh  # Path to your script to start the application
+      timeout: 300
+      runas: ec2-user  # Replace with the appropriate user for your OS
   ApplicationStart:
-    - location: scripts/start.sh
-      runas: root
-  ApplicationStop:
-    - location: scripts/stop.sh
-      runas: root
+    - location: scripts/start.sh  # Path to your script to start the application
+      timeout: 300
+      runas: ec2-user  # Replace with the appropriate user for your OS

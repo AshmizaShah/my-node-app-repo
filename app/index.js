@@ -2,16 +2,7 @@ const http = require('http');
 const fs = require('fs');
 
 const PORT = 8080;
-let configPath;
-
-// Use NODE_ENV to determine which config file to load
-if (process.env.NODE_ENV === 'production') {
-  configPath = `${__dirname}/config.prod.json`;
-} else if (process.env.NODE_ENV === 'development') {
-  configPath = `${__dirname}/config.dev.json`;
-} else {
-  configPath = `${__dirname}/config.json`; // Fallback to default config
-}
+const configPath = `${__dirname}/config.json`;
 
 const config = JSON.parse(fs.readFileSync(configPath));
 

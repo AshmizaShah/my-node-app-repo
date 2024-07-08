@@ -1,5 +1,4 @@
-
 #!/bin/bash
+# Stop the Node.js application
 
-killall -9 node || true
-
+systemctl stop my-node-app.service  # Example command to stop the application using systemctl
