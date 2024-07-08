@@ -1,55 +1,49 @@
-name: Deploy to AWS (Development)
+name: Deploy to EC2 using AWS CodeDeploy
 
 on:
   push:
     branches:
-      - main
+      - main  # Replace with your main branch name
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
-    env:
-      AWS_DEFAULT_REGION: eu-north-1
-      APPLICATION_NAME: CodeDeployApp
-      DEPLOYMENT_GROUP: development
-      S3_BUCKET: myawsbucketdemonst
+    runs-on: ubuntu-latest  # Use ubuntu-latest or another appropriate GitHub Actions runner
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '14'  # Replace with your Node.js version
 
-      - name: Build project
+      - name: Install dependencies
         run: |
-          cd app
-          zip -r ../myapp-dev.zip *
+          npm install  # Adjust if you have specific npm commands for dependencies
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-region: eu-north-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          audience: sts.amazonaws.com
-        env:
-          AWS_DEFAULT_REGION: eu-north-1
-          APPLICATION_NAME: CodeDeployApp
-          DEPLOYMENT_GROUP: development
-          S3_BUCKET: myawsbucketdemonst
+      - name: Build and package application
+        run: |
+          npm run build  # Replace with your build command if needed
+          zip -r my-node-app.zip .  # Package your application for deployment
 
       - name: Upload to S3
-        run: aws s3 cp myapp-dev.zip s3://${{ env.S3_BUCKET }}/development/myapp-dev.zip
+        uses: jakejarvis/s3-sync-action@v3
+        with:
+          args: --acl private --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to AWS CodeDeploy
+      - name: Deploy to EC2 with AWS CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name ${{ env.APPLICATION_NAME }} \
-            --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} \
-            --s3-location bucket=${{ env.S3_BUCKET }},bundleType=zip,key=development/myapp-dev.zip \
-            --file-exists-behavior OVERWRITE \
-            --region ${{ env.AWS_DEFAULT_REGION }}
+            --application-name ${{ secrets.AWS_CODEDEPLOY_APP_NAME }} \
+            --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_DEPLOYMENT_GROUP }} \
+            --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},bundleType=zip,key=my-node-app.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
