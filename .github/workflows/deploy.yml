@@ -12,14 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
+      - name: Zip files
+        run: |
+          zip -r app.zip appspec.yml scripts/
+        working-directory: ./app
+      
       - name: Upload to S3
         run: |
-          zip -r app.zip appspec.yml start.sh stop.sh deploy.sh other_files
           aws s3 cp app.zip s3://myawsbucketdemonst/app.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
