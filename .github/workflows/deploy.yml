@@ -9,6 +9,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_DEFAULT_REGION: eu-north-1
+      APPLICATION_NAME: CodeDeployApp
+      DEPLOYMENT_GROUP: develop
+      S3_BUCKET: my-node-app-artifacts-git
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
