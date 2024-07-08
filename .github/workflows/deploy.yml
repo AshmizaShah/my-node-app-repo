@@ -34,9 +34,10 @@ jobs:
         run: aws s3 cp myapp-dev.zip s3://${{ env.S3_BUCKET }}/development/myapp-dev.zip
 
       - name: Deploy to AWS CodeDeploy
-        uses: aws-actions/aws-codedeploy-github-actions@v2.0.4
-        with:
-          application-name: ${{ env.APPLICATION_NAME }}
-          deployment-group: ${{ env.DEPLOYMENT_GROUP }}
-          revision-location: s3://${{ env.S3_BUCKET }}/development/myapp-dev.zip
-          region: ${{ env.AWS_DEFAULT_REGION }}
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.APPLICATION_NAME }} \
+            --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} \
+            --s3-location bucket=${{ env.S3_BUCKET }},bundleType=zip,key=development/myapp-dev.zip \
+            --file-exists-behavior OVERWRITE \
+            --region ${{ env.AWS_DEFAULT_REGION }}
