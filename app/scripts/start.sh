@@ -1,18 +1,14 @@
 #!/bin/bash
 
-# Load nvm and use the specified Node.js version
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+# Stop any running instances of node
+killall -9 node || true
 
-# Ensure the Node.js version you need is used
-nvm use 20 || nvm install 20
+# Set the environment and config file
+NODE_ENV=default
+CONFIG_FILE=config.json
 
-# Navigate to the application directory
-cd /opt/apps
+# Export the environment variable
+export NODE_ENV
 
-# Install dependencies
-npm install
-
-# Start the application
-node index.js
+# Start the Node.js application with the specified config file
+nohup /root/.nvm/versions/node/v20.14.0/bin/node /opt/apps/index.js --config $CONFIG_FILE > /opt/apps/start.log 2>&1 &
