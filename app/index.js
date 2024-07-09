@@ -12,6 +12,6 @@ const server = http.createServer((req, res) => {
   res.end(`${config.message}`);
 });
 
-server.listen(PORT, '16.171.15.112', () => {
-  console.log(`Server listening on http://16.171.15.112:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server listening on port ${PORT}`);
 });
