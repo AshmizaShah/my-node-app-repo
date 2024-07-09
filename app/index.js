@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 
-const PORT = 8080;
+const PORT = 8080;  // You can change this to any port you prefer
 const configPath = `${__dirname}/config.json`;
 
 const config = JSON.parse(fs.readFileSync(configPath));
@@ -12,5 +12,6 @@ const server = http.createServer((req, res) => {
   res.end(`${config.message}`);
 });
 
-server.listen(PORT);
-console.log(`Server listening on ${PORT}`);
+server.listen(PORT, '16.171.15.112', () => {
+  console.log(`Server listening on http://16.171.15.112:${PORT}`);
+});
