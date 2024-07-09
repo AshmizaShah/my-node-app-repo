@@ -16,7 +16,7 @@ jobs:
       - name: Navigate to the app directory and zip files
         run: |
           cd app
-          zip -r app.zip appspec.yml scripts/
+          zip -r app.zip .
           mv app.zip ..
       
       - name: Upload to S3
