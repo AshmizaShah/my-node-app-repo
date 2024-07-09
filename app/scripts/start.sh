@@ -1,28 +1,18 @@
-# scripts/start.sh
 #!/bin/bash
 
-# Load nvm and use the specified node version
+# Load nvm and use the specified Node.js version
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
-nvm use 20.15.0
+# Ensure the Node.js version you need is used
+nvm use 20 || nvm install 20
 
-echo "Now using node $(node -v) (npm $(npm -v))"
-echo "nvm version: $(nvm --version)"
-echo "Node.js version: $(node -v)"
-echo "Current directory: $(pwd)"
+# Navigate to the application directory
+cd /opt/apps
 
-# Run npm install to install dependencies
+# Install dependencies
 npm install
 
-echo "npm install completed successfully"
-
-# Start the Node.js application using index.js
-node /home/ec2-user/app/index.js
-
-if [ $? -eq 0 ]; then
-  echo "Application started successfully"
-else
-  echo "Error: Failed to start the application"
-  exit 1
-fi
+# Start the application
+node index.js

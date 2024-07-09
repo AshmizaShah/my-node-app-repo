@@ -1,14 +1,14 @@
 version: 0.0
 os: linux
+
 files:
-  - source: /
-    destination: /home/ec2-user/app
+  - source: ./
+    destination: /opt/apps
+
 hooks:
-  BeforeInstall:
-    - location: scripts/stop.sh
-      timeout: 300
-      runas: root
   AfterInstall:
     - location: scripts/start.sh
-      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop.sh
       runas: root
