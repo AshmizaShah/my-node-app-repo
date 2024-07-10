@@ -1,4 +1,4 @@
-version: 0.0
+\version: 0.0
 os: linux
 
 files:
@@ -9,11 +9,7 @@ hooks:
   ApplicationStart:
     - location: scripts/start.sh
       runas: root
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
 
   ApplicationStop:
     - location: scripts/stop.sh
       runas: root
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
