@@ -1,4 +1,4 @@
-name: Deploy to S3 and CodeDeploy
+name: Deploy to AWS
 
 on:
   push:
@@ -7,74 +7,55 @@ on:
       - release
 
 jobs:
-  build_and_deploy_dev:
-    name: Build and Deploy to Development
+  deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # Only run for main branch
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build for Development
-        run: |
-          cd app
-          zip -r myapp-dev.zip .
-          mv myapp-dev.zip ..
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-      - name: Upload to S3 for Development
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run build
+
+      - name: Determine deployment environment
+        id: env
         run: |
-          aws s3 cp myapp-dev.zip s3://myawsbucketdemonst/development/myapp-dev.zip
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "NODE_ENV=development" >> $GITHUB_ENV
+            echo "CONFIG_FILE=config.dev.json" >> $GITHUB_ENV
+            echo "DEPLOYMENT_GROUP=development" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
+            echo "NODE_ENV=production" >> $GITHUB_ENV
+            echo "CONFIG_FILE=config.prod.json" >> $GITHUB_ENV
+            echo "DEPLOYMENT_GROUP=production" >> $GITHUB_ENV
+          fi
+
+      - name: Zip application
+        run: zip -r app.zip .
+
+      - name: Upload to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-north-1'
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          aws s3 cp app.zip s3://myawsbucketdemonst/${{ env.DEPLOYMENT_GROUP }}/app.zip
 
-      - name: Deploy to Development
+      - name: Deploy to CodeDeploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           aws deploy create-deployment \
-            --application-name CodeDeployApp \
-            --deployment-group-name development \
-            --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=development/myapp-dev.zip \
-            --region 'eu-north-1'  # Adjust region as needed
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-north-1'
-          DEPLOYMENT_GROUP_NAME: 'development'  # Set the deployment group name
-
-  build_and_deploy_prod:
-    name: Build and Deploy to Production
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/release'  # Only run for release branch
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build for Production
-        run: |
-          cd app
-          zip -r myapp-prod.zip .
-          mv myapp-prod.zip ..
-
-      - name: Upload to S3 for Production
-        run: |
-          aws s3 cp myapp-prod.zip s3://myawsbucketdemonst/production/myapp-prod.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-north-1'
-
-      - name: Deploy to Production
-        run: |
-          aws deploy create-deployment \
-            --application-name CodeDeployApp \
-            --deployment-group-name production \
-            --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=production/myapp-prod.zip \
-            --region 'eu-north-1'  # Adjust region as needed
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-north-1'
-          DEPLOYMENT_GROUP_NAME: 'production'  # Set the deployment group name
+            --application-name GitApp \
+            --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} \
+            --s3-location bucket=myawsbucketdemonst, key=${{ env.DEPLOYMENT_GROUP }}/app.zip, bundleType=zip

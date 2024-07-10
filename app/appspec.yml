@@ -7,13 +7,11 @@ files:
 
 hooks:
   ApplicationStart:
-    - location: scripts/start.sh
+    - location: /opt/apps/scripts/start.sh
       runas: root
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
+      timeout: 300
 
   ApplicationStop:
-    - location: scripts/stop.sh
+    - location: /opt/apps/scripts/stop.sh
       runas: root
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
+      timeout: 300
