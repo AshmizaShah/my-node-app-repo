@@ -1,8 +1,17 @@
 const http = require('http');
 const fs = require('fs');
 
-const PORT = 8080;  // You can change this to any port you prefer
-const configPath = `${__dirname}/config.json`;
+const PORT = 8080;
+let configPath;
+
+// Use NODE_ENV to determine which config file to load
+if (process.env.NODE_ENV === 'production') {
+  configPath = `${__dirname}/config.prod.json`;
+} else if (process.env.NODE_ENV === 'development') {
+  configPath = `${__dirname}/config.dev.json`;
+} else {
+  configPath = `${__dirname}/config.json`; // Fallback to default config
+}
 
 const config = JSON.parse(fs.readFileSync(configPath));
 
@@ -12,6 +21,5 @@ const server = http.createServer((req, res) => {
   res.end(`${config.message}`);
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+server.listen(PORT);
+console.log(`Server listening on ${PORT}`);
