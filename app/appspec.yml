@@ -6,26 +6,14 @@ files:
     destination: /opt/apps
 
 hooks:
-  BeforeInstall:
-    - location: scripts/start.sh
+  ApplicationStart:
+    - location: /opt/apps/scripts/start.sh
       runas: root
-      timeout: 300
       # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development"
-
-    - location: scripts/start-prod.sh
-      runas: root
-      timeout: 300
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "production"
+      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
 
   ApplicationStop:
-    - location: scripts/stop.sh
+    - location: /opt/apps/scripts/stop.sh
       runas: root
       # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development"
-
-    - location: scripts/stop-prod.sh
-      runas: root
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "production"
+      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
