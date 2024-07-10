@@ -11,21 +11,10 @@ hooks:
       runas: root
       timeout: 300
       # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development"
-
-    - location: scripts/start-prod.sh  # Script for production environment
-      runas: root
-      timeout: 300
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "production"
+      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
 
   ApplicationStop:
     - location: scripts/stop.sh
       runas: root
       # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "development"
-
-    - location: scripts/stop-prod.sh  # Script for production environment
-      runas: root
-      # Conditionally execute based on environment
-      if: test $DEPLOYMENT_GROUP_NAME = "production"
+      if: test $DEPLOYMENT_GROUP_NAME = "development" || test $DEPLOYMENT_GROUP_NAME = "production"
