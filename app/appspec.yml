@@ -4,6 +4,7 @@ os: linux
 files:
   - source: ./
     destination: /opt/apps
+    overwrite: true  # Ensure files are overwritten if they exist
 
 hooks:
   AfterInstall:
