@@ -21,37 +21,33 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: gittestrepo/app  # Adjust the path to your application's directory
 
       - name: Build application
         run: npm run build
-        working-directory: gittestrepo/app  # Adjust the path to your application's directory
 
       - name: Determine deployment environment
         id: env
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "environment=development" >> $GITHUB_ENV
+            echo "NODE_ENV=development" >> $GITHUB_ENV
+            echo "CONFIG_FILE=config.dev.json" >> $GITHUB_ENV
             echo "DEPLOYMENT_GROUP=development" >> $GITHUB_ENV
-            echo "S3_KEY=development/app.zip" >> $GITHUB_ENV
-            echo ${{ secrets.DEV_ENVIRONMENT_VARIABLES }} >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
-            echo "environment=production" >> $GITHUB_ENV
+            echo "NODE_ENV=production" >> $GITHUB_ENV
+            echo "CONFIG_FILE=config.prod.json" >> $GITHUB_ENV
             echo "DEPLOYMENT_GROUP=production" >> $GITHUB_ENV
-            echo "S3_KEY=production/app.zip" >> $GITHUB_ENV
-            echo ${{ secrets.PROD_ENVIRONMENT_VARIABLES }} >> $GITHUB_ENV
           fi
 
       - name: Zip application
         run: zip -r app.zip .
-       
+
       - name: Upload to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          aws s3 cp app.zip s3://myawsbucketdemonst/${{ env.S3_KEY }}
+          aws s3 cp app.zip s3://myawsbucketdemonst/${{ env.DEPLOYMENT_GROUP }}/app.zip
 
       - name: Deploy to CodeDeploy
         env:
@@ -62,4 +58,4 @@ jobs:
           aws deploy create-deployment \
             --application-name GitApp \
             --deployment-group-name ${{ env.DEPLOYMENT_GROUP }} \
-            --s3-location bucket=myawsbucketdemonst,key=${{ env.S3_KEY }},bundleType=zip
+            --s3-location bucket=myawsbucketdemonst,key=${{ env.DEPLOYMENT_GROUP }}/app.zip,bundleType=zip
