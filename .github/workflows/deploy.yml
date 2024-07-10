@@ -56,15 +56,14 @@ jobs:
         run: |
           cd app
           zip -r myapp-prod.zip .
-          mv myapp-prod.zip /var  # Move zip file to production directory
-
+         
       - name: Upload to S3 for Production
         run: |
-          aws s3 cp /var/myapp-prod.zip s3://myawsbucketdemonst/production/myapp-prod.zip
+          aws s3 cp /opt/myapp-prod.zip s3://myawsbucketdemonst/production/myapp-prod.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-north-1'
+          AWS_DEFAULT_REGION: 'ap-south-1'
 
       - name: Deploy to Production
         run: |
@@ -76,5 +75,5 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-north-1'
+          AWS_DEFAULT_REGION: 'ap-south-1'
           DEPLOYMENT_GROUP_NAME: 'production'  # Set the deployment group name
