@@ -9,7 +9,16 @@ hooks:
   AfterInstall:
     - location: scripts/start.sh
       runas: root
+      timeout: 300
+      # Conditionally execute based on environment
+      if: test $DEPLOYMENT_GROUP_NAME = "development"
+      
+    - location: scripts/start.sh
+      runas: root
+      timeout: 300
+      # Conditionally execute based on environment
+      if: test $DEPLOYMENT_GROUP_NAME = "production"
+
   ApplicationStop:
     - location: scripts/stop.sh
       runas: root
-
