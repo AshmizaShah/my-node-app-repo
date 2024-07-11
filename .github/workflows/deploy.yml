@@ -53,7 +53,7 @@ jobs:
 
       - name: Build for Production
         run: |
-          cd app
+          cd ./app
           zip -r myapp-prod.zip .
           ls -l myapp-prod.zip  # Check if the zip file is created
         working-directory: ./app
