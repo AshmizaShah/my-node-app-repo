@@ -1,15 +1,38 @@
+# version: 0.0
+# os: linux
+
+# files:
+#   - source: ./app
+#     destination: /opt/apps
+
+# hooks:
+#   ApplicationStop:
+#     - location: app/scripts/stop.sh
+#       runas: root
+
+#   ApplicationStart:
+#     - location: app/scripts/start.sh
+#       runas: root
 version: 0.0
 os: linux
-
 files:
-  - source: ./app
-    destination: /opt/apps
-
+  - source: /
+    destination: /var/www/html/ashmiza.com
+    overwrite: true
+permissions:
+  - object: /var/www/html/ashmiza.com/script
+    pattern: "*.sh"
+    owner: root
+    group: root
+    mode: 755
+    type:
+      - file
 hooks:
-  ApplicationStop:
-    - location: app/scripts/stop.sh
+  BeforeInstall:
+    - location: scripts/stop.sh
+      timeout: 3000
       runas: root
-
   ApplicationStart:
-    - location: app/scripts/start.sh
+    - location: scripts/start.sh
+      timeout: 180
       runas: root
