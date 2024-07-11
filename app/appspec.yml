@@ -20,7 +20,7 @@ files:
     destination: /var/www/html/ashmiza.com
     overwrite: true
 permissions:
-  - object: /var/www/html/ashmiza.com/script
+  - object: /var/www/html/ashmiza.com/scripts
     pattern: "*.sh"
     owner: root
     group: root
