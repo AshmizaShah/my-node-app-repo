@@ -21,6 +21,10 @@ jobs:
           cd app
           zip -r myapp-dev.zip .
       
+      - name: Verify zip file location
+        run: |
+          ls -la ../  # Verify file location for troubleshooting
+
       - name: Upload to S3 for Development
         run: |
           aws s3 cp myapp-dev.zip s3://myawsbucketdemonst/development/myapp-dev.zip --region eu-north-1
@@ -41,38 +45,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'ap-south-1'
           DEPLOYMENT_GROUP_NAME: 'development'  # Set the deployment group name
-
-  build_and_deploy_prod:
-    name: Build and Deploy to Production
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/release'  # Only run for release branch
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build for Production
-        run: |
-          cd app
-          zip -r myapp-prod.zip ./app
-      
-      - name: Upload to S3 for Production
-        run: |
-          aws s3 cp myapp-prod.zip s3://myawsbucketdemonst/production/myapp-prod.zip --region eu-north-1
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'ap-south-1'
-
-      - name: Deploy to Production
-        run: |
-          aws deploy create-deployment \
-            --application-name GitApp \
-            --deployment-group-name production \
-            --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=production/myapp-prod.zip \
-            --region 'ap-south-1'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'ap-south-1'
-          DEPLOYMENT_GROUP_NAME: 'production'  # Set the deployment group name
