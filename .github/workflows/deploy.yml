@@ -20,10 +20,15 @@ jobs:
         run: |
           cd app
           zip -r myapp-dev.zip .
-      
+          mv myapp-dev.zip ..
+
+      - name: Verify zip file
+        run: |
+          ls -la ..
+
       - name: Upload to S3 for Development
         run: |
-          aws s3 cp myapp-dev.zip s3://myawsbucketdemonst/development/myapp-dev.zip
+          aws s3 cp ../myapp-dev.zip s3://myawsbucketdemonst/development/myapp-dev.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -53,13 +58,17 @@ jobs:
 
       - name: Build for Production
         run: |
-          ls -la  # List directory contents for debugging
+          cd app
           zip -r myapp-prod.zip ./app
-          ls -la myapp-prod.zip  # Check if the zip file is created
-      
+          mv myapp-prod.zip ..
+
+      - name: Verify zip file
+        run: |
+          ls -la ..
+
       - name: Upload to S3 for Production
         run: |
-          aws s3 cp myapp-prod.zip s3://myawsbucketdemonst/production/myapp-prod.zip
+          aws s3 cp ../myapp-prod.zip s3://myawsbucketdemonst/production/myapp-prod.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
