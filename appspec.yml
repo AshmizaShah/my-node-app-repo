@@ -7,9 +7,9 @@ files:
 
 hooks:
   ApplicationStop:
-    - location: app/scripts/stop.sh
+    - location: /opt/apps/scripts/stop.sh
       runas: root
 
   ApplicationStart:
-    - location: app/scripts/start.sh
+    - location: /opt/apps/scripts/start.sh
       runas: root
