@@ -36,7 +36,7 @@ jobs:
             --application-name GitApp \
             --deployment-group-name development \
             --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=development/myapp-dev.zip \
-            --region 'ap-south-1'  # Adjust region as needed
+            --region 'eu-north-1'  # Adjust region as needed
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -72,7 +72,7 @@ jobs:
             --application-name CodeDeployApp \
             --deployment-group-name production \
             --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=production/myapp-prod.zip \
-            --region 'ap-south-1'  # Adjust region as needed
+            --region 'eu-north-1'  # Adjust region as needed
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
