@@ -58,11 +58,11 @@ jobs:
           # ls -la myapp-prod.zip  # Check if the zip file is created
           ls -la  # List directory contents for debugging
           mkdir -p opt/apps/scripts
-          cp scripts/start.sh opt/apps/scripts/start.sh  # Ensure the start.sh script is included
-          cp scripts/stop.sh opt/apps/scripts/stop.sh  # Ensure the stop.sh script is included
+          cp app/scripts/start.sh opt/apps/scripts/start.sh  # Ensure the start.sh script is included
+          cp app/scripts/stop.sh opt/apps/scripts/stop.sh  # Ensure the stop.sh script is included
           cp appspec.yml opt/  # Ensure the appspec.yml is included
-          zip -r myapp-prod.zip opt  # Include the necessary files in the zip
-          ls -la myapp-prod.zip  # Check if the zip file is created
+          zip -r myapp-dev.zip opt  # Include the necessary files in the zip
+          ls -la myapp-dev.zip  # Check if the zip file is created
       
       - name: Upload to S3 for Production
         run: |
