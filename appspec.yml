@@ -14,7 +14,7 @@
 #     - location: app/scripts/start.sh
 #       runas: root
 version: 0.0
-os: linux
+runs-on: ubuntu-latest
 files:
   - source: /
     destination: /var/www/html/ashmiza.com
