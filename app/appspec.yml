@@ -3,15 +3,13 @@ os: linux
 
 files:
   - source: ./
-    destination: /var/www/html
+    destination: /opt/apps
 
 hooks:
   ApplicationStart:
-    - location: /var/www/html/test/start.sh
+    - location: scripts/start.sh
       runas: root
-      timeout: 300
 
   ApplicationStop:
-    - location: /var/www/html/test/stop.sh
+    - location: scripts/stop.sh
       runas: root
-      timeout: 300
