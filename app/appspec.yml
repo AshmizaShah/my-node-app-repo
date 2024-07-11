@@ -24,7 +24,7 @@ permissions:
     pattern: "*.sh"
     owner: root
     group: root
-    mode: 755
+    mode: 777
     type:
       - file
 hooks:
@@ -32,10 +32,19 @@ hooks:
     - location: /opt/apps/scripts/stop.sh
       timeout: 3000
       runas: root
+    - location: /bin/bash
+      timeout: 180
+      runas: root
+      script: |
+        echo "BeforeInstall Hook - Current Directory:"
+        pwd
+        echo "BeforeInstall Hook - Listing Files:"
+        ls -la /opt/apps/scripts
   ApplicationStart:
     - location: /opt/apps/scripts/start.sh
       timeout: 180
       runas: root
+
 
 
 
