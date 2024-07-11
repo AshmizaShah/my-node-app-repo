@@ -16,11 +16,11 @@
 version: 0.0
 os: linux
 files:
-  - source: /
-    destination: /
+  - source: app/
+    destination: /opt/apps/
     overwrite: true
 permissions:
-  - object: /app/scripts
+  - object: /opt/apps/scripts
     pattern: "*.sh"
     owner: root
     group: root
@@ -29,12 +29,13 @@ permissions:
       - file
 hooks:
   BeforeInstall:
-    - location: /app/scripts/stop.sh
+    - location: /opt/apps/scripts/stop.sh
       timeout: 3000
       runas: root
   ApplicationStart:
-    - location: /app/scripts/start.sh
+    - location: /opt/apps/scripts/start.sh
       timeout: 180
       runas: root
+
 
 
