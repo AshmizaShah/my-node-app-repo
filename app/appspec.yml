@@ -17,10 +17,10 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /var/www/html/ashmiza.com
+    destination: /
     overwrite: true
 permissions:
-  - object: /var/www/html/ashmiza.com/scripts
+  - object: /opt/apps/scripts
     pattern: "*.sh"
     owner: root
     group: root
@@ -29,11 +29,12 @@ permissions:
       - file
 hooks:
   BeforeInstall:
-    - location: /var/www/html/ashmiza.com/scripts/stop.sh
+    - location: /opt/apps/scripts/stop.sh
       timeout: 3000
       runas: root
   ApplicationStart:
-    - location: /var/www/html/ashmiza.com/scripts/start.sh
+    - location: /opt/apps/scripts/start.sh
       timeout: 180
       runas: root
+
 
