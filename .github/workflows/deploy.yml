@@ -63,6 +63,7 @@ jobs:
           cd app
           ls -la  # List files in the app directory
           zip -r ../myapp-prod.zip .  # Create the ZIP file one level up
+          unzip -l myapp-prod.zip
           cd ..
           ls -la  # List files in the root directory to check for the ZIP file
       
