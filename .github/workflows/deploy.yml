@@ -87,3 +87,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'ap-south-1'
           DEPLOYMENT_GROUP_NAME: 'production'  # Set the deployment group name
+
+      - name: Wait for deployment
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region ${{ secrets.AWS_DEFAULT_REGION }}
+          aws deploy wait deployment-successful --deployment-id ${{ steps.deploy.outputs.deployment-id }} --region ${{ secrets.AWS_DEFAULT_REGION }}
