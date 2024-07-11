@@ -60,7 +60,10 @@ jobs:
         run: |
           cd app
           ls -la
-          zip -r ../myapp-prod.zip .
+          mkdir -p ../opt/apps/scripts  # Create the directory structure
+          cp scripts/stop.sh ../opt/apps/scripts/  # Copy stop.sh to the expected directory
+          cp scripts/start.sh ../opt/apps/scripts/  # Copy start.sh to the expected directory
+          zip -r ../myapp-prod.zip . ../opt/apps/scripts  # Include the scripts in the zip file
           cd ..
           unzip -l myapp-prod.zip
           ls -la
