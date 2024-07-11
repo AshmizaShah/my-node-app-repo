@@ -60,7 +60,7 @@ jobs:
           mkdir -p opt/apps/scripts
           cp app/scripts/start.sh opt/apps/scripts/start.sh  # Ensure the start.sh script is included
           cp app/scripts/stop.sh opt/apps/scripts/stop.sh  # Ensure the stop.sh script is included
-          cp app/scripts/appspec.yml opt/  # Ensure the appspec.yml is included
+          cp app/appspec.yml opt/  # Ensure the appspec.yml is included
           zip -r myapp-dev.zip opt  # Include the necessary files in the zip
           ls -la myapp-dev.zip  # Check if the zip file is created
       
