@@ -27,7 +27,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'ap-south-1'
+          AWS_DEFAULT_REGION: 'eu-north-1'
 
       - name: Deploy to Development
         run: |
@@ -35,11 +35,11 @@ jobs:
             --application-name GitApp \
             --deployment-group-name development \
             --s3-location bucket=myawsbucketdemonstpurpose,bundleType=zip,key=development/myapp-dev.zip \
-            --region 'ap-south-1'
+            --region 'eu-north-1'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'ap-south-1'
+          AWS_DEFAULT_REGION: 'eu-north-1'
           DEPLOYMENT_GROUP_NAME: 'development'  # Set the deployment group name
 
   build_and_deploy_prod:
@@ -62,17 +62,17 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'ap-south-1'
+          AWS_DEFAULT_REGION: 'eu-north-1'
 
       - name: Deploy to Production
         run: |
           aws deploy create-deployment \
             --application-name GitApp \
             --deployment-group-name production \
-            --s3-location bucket=myawsbucketdemonstpurpose,bundleType=zip,key=production/myapp-prod.zip \
-            --region 'ap-south-1'
+            --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=production/myapp-prod.zip \
+            --region 'eu-north-1'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'ap-south-1'
+          AWS_DEFAULT_REGION: 'eu-north-1'
           DEPLOYMENT_GROUP_NAME: 'production'  # Set the deployment group name
