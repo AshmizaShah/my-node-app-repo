@@ -71,7 +71,7 @@ jobs:
             --application-name GitApp \
             --deployment-group-name production \
             --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=production/myapp-prod.zip \
-            --region 'ap-south-1'
+            --region 'eu-north-1'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
