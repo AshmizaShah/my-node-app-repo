@@ -19,6 +19,8 @@ jobs:
       - name: Build for Development
         run: |
           cd app
+          chmod +x scripts/stop.sh  # Add execute permissions
+          chmod +x scripts/start.sh  # Add execute permissions
           zip -r ../myapp-dev.zip .  # Ensure the entire app directory is zipped
           cd ..
           unzip -l myapp-dev.zip  # List the contents of the zip file for verification
@@ -61,6 +63,8 @@ jobs:
       - name: Build for Production
         run: |
           cd app
+          chmod +x scripts/stop.sh  # Add execute permissions
+          chmod +x scripts/start.sh  # Add execute permissions
           ls -la
           zip -r ../myapp-prod.zip .  # Ensure the entire app directory is zipped
           cd ..
