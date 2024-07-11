@@ -19,7 +19,9 @@ jobs:
       - name: Build for Development
         run: |
           cd app
-          zip -r myapp-dev.zip .
+          zip -r ../myapp-dev.zip .  # Ensure the entire app directory is zipped
+          cd ..
+          unzip -l myapp-dev.zip  # List the contents of the zip file for verification
 
       - name: Upload to S3 for Development
         run: |
@@ -60,12 +62,9 @@ jobs:
         run: |
           cd app
           ls -la
-          mkdir -p ../var/www/html/ashmiza.com/scripts  # Create the directory structure
-          cp scripts/stop.sh ../var/www/html/ashmiza.com/scripts/  # Copy stop.sh to the expected directory
-          cp scripts/start.sh ../var/www/html/ashmiza.com/scripts/  # Copy start.sh to the expected directory
-          zip -r ../myapp-prod.zip . ../var/www/html/ashmiza.com/scripts  # Include the scripts in the zip file
+          zip -r ../myapp-prod.zip .  # Ensure the entire app directory is zipped
           cd ..
-          unzip -l myapp-prod.zip  # List the contents of the zip file
+          unzip -l myapp-prod.zip  # List the contents of the zip file for verification
           ls -la
 
       - name: Upload to S3 for Production
