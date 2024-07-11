@@ -10,7 +10,7 @@ jobs:
   build_and_deploy_dev:
     name: Build and Deploy to Development
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # Only run for main branch
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -20,7 +20,7 @@ jobs:
         run: |
           cd app
           zip -r myapp-dev.zip .
-      
+
       - name: Upload to S3 for Development
         run: |
           aws s3 cp myapp-dev.zip s3://myawsbucketdemonst/development/myapp-dev.zip
@@ -40,17 +40,15 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'eu-north-1'
-          DEPLOYMENT_GROUP_NAME: 'development'  # Set the deployment group name
 
   build_and_deploy_prod:
     name: Build and Deploy to Production
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/release'  # Only run for release branch
+    if: github.ref == 'refs/heads/release'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
 
       - name: Show current directory
         run: pwd
@@ -61,12 +59,12 @@ jobs:
       - name: Build for Production
         run: |
           cd app
-          ls -la  # List files in the app directory
-          zip -r ../myapp-prod.zip .  # Create the ZIP file one level up
+          ls -la
+          zip -r ../myapp-prod.zip .
           cd ..
-          unzip -l myapp-prod.zip  # List the contents of the ZIP file
-          ls -la  # List files in the root directory to check for the ZIP file
-      
+          unzip -l myapp-prod.zip
+          ls -la
+
       - name: Upload to S3 for Production
         run: |
           aws s3 cp myapp-prod.zip s3://myawsbucketdemonstpurpose/production/myapp-prod.zip
@@ -86,5 +84,3 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'ap-south-1'
-          DEPLOYMENT_GROUP_NAME: 'production'  # Set the deployment group name
-
