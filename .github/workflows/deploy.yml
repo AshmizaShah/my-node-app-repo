@@ -53,10 +53,9 @@ jobs:
 
       - name: Build for Production
         run: |
-          cd ./app
-          zip -r myapp-prod.zip .
-          ls -l myapp-prod.zip  # Check if the zip file is created
-        working-directory: ./app
+          ls -la  # List directory contents for debugging
+          zip -r myapp-prod.zip ./app
+          ls -la myapp-prod.zip  # Check if the zip file is created
       
       - name: Upload to S3 for Production
         run: |
