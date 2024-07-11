@@ -2,14 +2,14 @@ version: 0.0
 os: linux
 
 files:
-  - source: ./
+  - source: ./app
     destination: /opt/apps
 
 hooks:
-  ApplicationStart:
-    - location: scripts/start.sh
+  ApplicationStop:
+    - location: app/scripts/stop.sh
       runas: root
 
-  ApplicationStop:
-    - location: scripts/stop.sh
+  ApplicationStart:
+    - location: app/scripts/start.sh
       runas: root
