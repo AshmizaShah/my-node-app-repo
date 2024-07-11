@@ -14,7 +14,7 @@
 #     - location: app/scripts/start.sh
 #       runas: root
 version: 0.0
-runs-on: ubuntu-latest
+os: linux
 files:
   - source: /
     destination: /var/www/html/ashmiza.com
@@ -29,9 +29,14 @@ permissions:
       - file
 hooks:
   BeforeInstall:
-    - location: scripts/stop.sh
+    - location: /var/www/html/ashmiza.com/scripts/stop.sh
       timeout: 3000
       runas: root
+  ApplicationStart:
+    - location: /var/www/html/ashmiza.com/scripts/start.sh
+      timeout: 180
+      runas: root
+
   ApplicationStart:
     - location: scripts/start.sh
       timeout: 180
