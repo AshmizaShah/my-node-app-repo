@@ -51,11 +51,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+
+      - name: Show current directory
+        run: pwd
+
+      - name: List files in the root directory
+        run: ls -la
+
       - name: Build for Production
         run: |
           cd app
-          zip -r myapp-prod.zip .
-          ls -la myapp-prod.zip  # Check if the ZIP file is created
+          ls -la  # List files in the app directory
+          zip -r ../myapp-prod.zip .  # Create the ZIP file one level up
+          cd ..
+          ls -la  # List files in the root directory to check for the ZIP file
       
       - name: Upload to S3 for Production
         run: |
