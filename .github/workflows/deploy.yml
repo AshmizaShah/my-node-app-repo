@@ -55,6 +55,8 @@ jobs:
         run: |
           cd app
           zip -r myapp-prod.zip .
+          ls -l myapp-prod.zip  # Check if the zip file is created
+        working-directory: ./app
       
       - name: Upload to S3 for Production
         run: |
