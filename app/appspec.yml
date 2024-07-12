@@ -29,11 +29,19 @@ permissions:
       - file
 hooks:
   BeforeInstall:
+    - location: /opt/apps/scripts/stop.sh
+      timeout: 3000
+      runas: root
+  ApplicationStart:
+    - location: /opt/apps/scripts/start.sh
+      timeout: 180
+      runas: root
+  AfterInstall:
     - location: /bin/bash
       timeout: 300
       runas: root
       script: |
-        echo "BeforeInstall Hook - Checking /opt/apps/scripts directory"
+        echo "AfterInstall Hook - Checking /opt/apps/scripts directory"
         ls -la /opt/apps/scripts
         if [ -f /opt/apps/scripts/stop.sh ]; then
           echo "stop.sh found"
@@ -45,13 +53,6 @@ hooks:
         else
           echo "start.sh not found"
         fi
-    - location: /opt/apps/scripts/stop.sh
-      timeout: 3000
-      runas: root
-  ApplicationStart:
-    - location: /opt/apps/scripts/start.sh
-      timeout: 180
-      runas: root
 
 
 
