@@ -15,44 +15,19 @@
 #       runas: root
 version: 0.0
 os: linux
+
 files:
-  - source: .
-    destination: /opt/apps/
-    overwrite: true
-permissions:
-  - object: /opt/apps/scripts
-    pattern: "*.sh"
-    owner: root
-    group: root
-    mode: 755
-    type:
-      - file
+  - source: ./
+    destination: /opt/apps
+
 hooks:
-  BeforeInstall:
-    - location: /opt/apps/scripts/stop.sh
-      timeout: 3000
-      runas: root
   ApplicationStart:
-    - location: /opt/apps/scripts/start.sh
-      timeout: 180
+    - location: scripts/start.sh
       runas: root
-  AfterInstall:
-    - location: /bin/bash
-      timeout: 300
+
+  ApplicationStop:
+    - location: scripts/stop.sh
       runas: root
-      script: |
-        echo "AfterInstall Hook - Checking /opt/apps/scripts directory"
-        ls -la /opt/apps/scripts
-        if [ -f /opt/apps/scripts/stop.sh ]; then
-          echo "stop.sh found"
-        else
-          echo "stop.sh not found"
-        fi
-        if [ -f /opt/apps/scripts/start.sh ]; then
-          echo "start.sh found"
-        else
-          echo "start.sh not found"
-        fi
 
 
 
