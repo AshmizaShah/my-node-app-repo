@@ -56,22 +56,22 @@ jobs:
       - name: Build for Production
         run: |
           cd app
-          zip -r myapp-prod.zip ./app
-      
+          zip -r myapp-prod.zip .
+
       - name: Upload to S3 for Production
         run: |
-          aws s3 cp myapp-prod.zip s3://myawsbucketdemonst/production/myapp-prod.zip --region eu-north-1
+          aws s3 cp myapp-prod.zip s3://myawsbucketdemonstpurpose/production/myapp-prod.zip 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-north-1'
+          AWS_DEFAULT_REGION: 'ap-south-1'
 
       - name: Deploy to Production
         run: |
           aws deploy create-deployment \
             --application-name GitApp \
             --deployment-group-name production \
-            --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=production/myapp-prod.zip \
+            --s3-location bucket=myawsbucketdemonstpurpose,bundleType=zip,key=production/myapp-prod.zip \
             --region 'ap-south-1'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
