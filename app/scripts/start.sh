@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Stop any running instances of node
