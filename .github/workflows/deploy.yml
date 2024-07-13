@@ -1,3 +1,4 @@
+
 name: Deploy to S3 and CodeDeploy
 
 on:
@@ -35,13 +36,8 @@ jobs:
           aws deploy create-deployment \
             --application-name GitApp \
             --deployment-group-name development \
-<<<<<<< HEAD
-            --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=development/myapp-dev.zip \
-            --region 'eu-north-1'
-=======
             --s3-location bucket=myawsbucketdemonstpurpose,bundleType=zip,key=development/myapp-dev.zip \
             --region 'ap-south-1'
->>>>>>> 8e5e480e8cca1f8210b58b4678de5b18b533307e
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -60,11 +56,7 @@ jobs:
       - name: Build for Production
         run: |
           cd app
-<<<<<<< HEAD
-          zip -r myapp-prod.zip .
-=======
           zip -r myapp-prod.zip ./app
->>>>>>> 8e5e480e8cca1f8210b58b4678de5b18b533307e
       
       - name: Upload to S3 for Production
         run: |
@@ -80,11 +72,7 @@ jobs:
             --application-name GitApp \
             --deployment-group-name production \
             --s3-location bucket=myawsbucketdemonst,bundleType=zip,key=production/myapp-prod.zip \
-<<<<<<< HEAD
-            --region 'eu-north-1'
-=======
             --region 'ap-south-1'
->>>>>>> 8e5e480e8cca1f8210b58b4678de5b18b533307e
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

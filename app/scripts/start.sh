@@ -1,14 +1,15 @@
+
 #!/bin/bash
 
 # Stop any running instances of node
 killall -9 node || true
 
-# Determine the environment based on DEPLOYMENT_GROUP_NAME
-if [ "$DEPLOYMENT_GROUP_NAME" == "production" ]; then
+# Set the environment and config file based on the ENV variable
+if [ "$ENV" == "production" ]; then
   NODE_ENV=production
   CONFIG_FILE=config.prod.json
   echo "Starting application in production environment..."
-elif [ "$DEPLOYMENT_GROUP_NAME" == "development" ]; then
+elif [ "$ENV" == "development" ]; then
   NODE_ENV=development
   CONFIG_FILE=config.dev.json
   echo "Starting application in development environment..."
