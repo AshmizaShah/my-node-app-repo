@@ -7,9 +7,14 @@ files:
 
 hooks:
   ApplicationStart:
+<<<<<<< HEAD
     - location: /opt/apps/scripts/start.sh
       runas: root
       timeout: 300
+=======
+    - location: scripts/start.sh
+      runas: root
+>>>>>>> 8e5e480e8cca1f8210b58b4678de5b18b533307e
 
   ApplicationStop:
     - location: /opt/apps/scripts/stop.sh
