@@ -70,7 +70,7 @@ jobs:
       - name: Deploy to Production
         run: |
           aws deploy create-deployment \
-            --application-name GitApp \
+            --application-name Github \
             --deployment-group-name production \
             --s3-location bucket=myawsbucketdemonstpurpose,bundleType=zip,key=production/myapp-prod.zip \
             --region 'ap-south-1'
